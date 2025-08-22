@@ -32,17 +32,36 @@ module.exports.createListing = async (req, res, next) => {
     })
     .send();
 
-  let url = req.file.path;
-  let filename = req.file.filename;
-
-  const newListing = new Listing(req.body.listing);
+  
+  const { imageUrl, ...listingData } = req.body.listing;
+  const newListing = new Listing(listingData);
   newListing.owner = req.user._id;
-  newListing.image = { filename, url };
+
+  
+  if (req.file) {
+    newListing.image = {
+      filename: req.file.filename,
+      url: req.file.path,
+    };
+  }
+
+  
+  if (imageUrl) {
+    newListing.image = {
+      filename: "custom-url",
+      url: imageUrl,
+    };
+  }
+
+  
   newListing.geometry = response.body.features[0].geometry;
+
   await newListing.save();
   req.flash("success", "New listing created!");
   res.redirect("/listings");
 };
+
+
 
 module.exports.renderEditForm = async (req, res) => {
   let { id } = req.params;
