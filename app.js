@@ -99,6 +99,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("./listings/error.ejs", { message });
 });
 
-app.listen(8080, () => {
-  console.log("Listening on port 8080");
+const PORT = process.env.PORT || 8080;  // fallback to 8080 locally
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
 });
